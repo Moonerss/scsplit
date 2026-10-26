@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "scsplit samplesheet",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["name", "input"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+      "input": {"type": "string", "pattern": "(?i)\\.(h5ad|rds)$"}
+    }
+  }
+}

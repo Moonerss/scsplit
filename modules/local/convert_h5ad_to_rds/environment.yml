@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.3
+  - bioconductor-anndatar=1.0.2
+  - bioconductor-rhdf5=2.54.1
+  - bioconductor-singlecellexperiment=1.32.0

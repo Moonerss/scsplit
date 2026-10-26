@@ -1,0 +1,11 @@
+work/
+.results/
+.nextflow/
+.nextflow.log*
+results/
+*.html
+*.trace
+*.timeline
+*.dag.svg
+*.bak
+.claude/settings.local.json
