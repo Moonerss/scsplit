@@ -1,9 +1,7 @@
 process SPLIT_SCE_RDS {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? "${projectDir}/containers/scsplit.sif"
-        : params.container_image}"
+    container "${params.container_image}"
 
     input:
     tuple val(meta), path(input), val(split_column)
@@ -13,17 +11,5 @@ process SPLIT_SCE_RDS {
     path 'versions.yml', emit: versions
 
     script:
-    """
-    Rscript ${projectDir}/modules/local/split_sce_rds/templates/split_sce_rds.R \\
-        --input ${input} \\
-        --split-column '${split_column}' \\
-        --name '${meta.name}' \\
-        --output-dir rds_outputs \\
-        --manifest split_manifest.tsv
-    cat > versions.yml <<'EOF'
-    SPLIT_SCE_RDS:
-        r: \"\$(R --version | head -n 1 | sed 's/^R version //')\"
-        SingleCellExperiment: \"\$(Rscript -e 'cat(as.character(packageVersion(\"SingleCellExperiment\")))')\"
-    EOF
-    """
+    template 'split_sce_rds.R'
 }

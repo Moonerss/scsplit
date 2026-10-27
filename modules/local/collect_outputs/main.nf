@@ -1,9 +1,8 @@
 process COLLECT_OUTPUTS {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? "${projectDir}/containers/scsplit.sif"
-        : params.container_image}"
+    container "${params.container_image}"
+    publishDir path: { outdir }, mode: 'copy', enabled: true
 
     input:
     tuple val(meta), path(output_files), path(manifests), val(formats)
@@ -13,20 +12,8 @@ process COLLECT_OUTPUTS {
     path "${meta.name}", emit: collected
 
     script:
-    def copy_commands = output_files.withIndex().collect { file, index ->
-        "mkdir -p '${meta.name}/${formats[index]}' && cp '${file}' '${meta.name}/${formats[index]}/'"
-    }.join('\n')
-    def manifest_args = manifests.collect { "'${it}'" }.join(' ')
-    def output_args = output_files.collect { "'${it}'" }.join(' ')
-    def format_args = formats.collect { "'${it}'" }.join(' ')
-    """
-    mkdir -p '${meta.name}'
-    ${copy_commands}
-    python ${projectDir}/modules/local/collect_outputs/templates/collect_outputs.py \\
-        --manifests ${manifest_args} \\
-        --outputs ${output_args} \\
-        --formats ${format_args} \\
-        --name '${meta.name}' \\
-        --output '${meta.name}/split_manifest.tsv'
-    """
+    manifest_args = groovy.json.JsonOutput.toJson(manifests.collect { it.toString() })
+    output_args = groovy.json.JsonOutput.toJson(output_files.collect { it.toString() })
+    format_args = groovy.json.JsonOutput.toJson(formats.collect { it.toString() })
+    template 'collect_outputs.py'
 }

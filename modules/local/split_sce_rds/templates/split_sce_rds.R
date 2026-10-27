@@ -1,13 +1,11 @@
 #!/usr/bin/env Rscript
 suppressPackageStartupMessages(library(SingleCellExperiment))
 
-args <- commandArgs(trailingOnly = TRUE)
-get_arg <- function(flag) args[which(args == flag) + 1]
-input <- get_arg('--input')
-split_column <- get_arg('--split-column')
-name <- get_arg('--name')
-output_dir <- get_arg('--output-dir')
-manifest <- get_arg('--manifest')
+input <- "${input}"
+split_column <- "${split_column}"
+name <- "${meta.name}"
+output_dir <- 'rds_outputs'
+manifest <- 'split_manifest.tsv'
 
 sce <- readRDS(input)
 if (!inherits(sce, 'SingleCellExperiment')) stop('ERROR: RDS object is not a SingleCellExperiment')
@@ -18,9 +16,10 @@ if (anyNA(values)) stop('ERROR: split column contains missing values')
 groups <- unique(as.character(values))
 if (!length(groups)) stop('ERROR: split column contains no groups')
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
 safe_name <- function(x) {
   value <- gsub('[^A-Za-z0-9_.-]+', '_', as.character(x))
-  value <- gsub('^[._]+|[._]+$', '', value)
+  value <- trimws(value, whitespace = '[._]')
   if (!nzchar(value)) value <- 'group'
   substr(value, 1L, 180L)
 }
@@ -44,4 +43,9 @@ for (value in groups) {
     stringsAsFactors = FALSE
   )
 }
-write.table(do.call(rbind, rows), manifest, sep = '\t', quote = TRUE, row.names = FALSE)
+write.table(do.call(rbind, rows), manifest, sep = intToUtf8(9L), quote = TRUE, row.names = FALSE)
+writeLines(c(
+  'SPLIT_SCE_RDS:',
+  paste0('    r: ', R.version[['version.string']]),
+  paste0('    SingleCellExperiment: ', packageVersion('SingleCellExperiment'))
+), 'versions.yml')

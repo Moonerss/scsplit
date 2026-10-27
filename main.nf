@@ -9,9 +9,12 @@ params.split_column = null
 params.output_format = 'h5ad'
 params.outdir = 'results'
 
+
 workflow {
+    samplesheet = Channel.fromPath(params.input, checkIfExists: true)
+
     SCSPLIT(
-        params.input,
+        samplesheet,
         params.split_column,
         params.output_format,
         params.outdir
