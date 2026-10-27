@@ -1,4 +1,4 @@
-FROM mambaorg/micromamba:1.5.10
+FROM mambaorg/micromamba:2.10.0-ubuntu24.04
 
 LABEL org.opencontainers.image.title="scsplit runtime"
 LABEL org.opencontainers.image.description="Runtime dependencies for all scsplit Nextflow processes"
