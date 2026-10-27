@@ -24,6 +24,11 @@
     "outdir": {
       "type": "string",
       "default": "results"
+    },
+    "container_image": {
+      "type": "string",
+      "default": "scsplit:0.1.0",
+      "description": "Docker image used by all workflow processes"
     }
   }
 }

@@ -2,8 +2,8 @@ process COLLECT_OUTPUTS {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'docker://docker.io/library/python:3.11-slim'
-        : 'docker.io/library/python:3.11-slim'}"
+        ? "${projectDir}/containers/scsplit.sif"
+        : params.container_image}"
 
     input:
     tuple val(meta), path(output_files), path(manifests), val(formats)

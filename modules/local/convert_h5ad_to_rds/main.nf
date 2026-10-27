@@ -2,8 +2,8 @@ process CONVERT_H5AD_TO_RDS {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/63/63ce18f987c08fe48ed9a5ec7fee64561a63297771bda7bcb6d9f591162be4c3/data'
-        : 'community.wave.seqera.io/library/bioconductor-anndatar_bioconductor-rhdf5_bioconductor-singlecellexperiment:7f4fd121bcbeb705'}"
+        ? "${projectDir}/containers/scsplit.sif"
+        : params.container_image}"
 
     input:
     tuple val(meta), path(input), path(manifest)

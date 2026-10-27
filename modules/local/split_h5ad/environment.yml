@@ -3,4 +3,5 @@ channels:
   - bioconda
 dependencies:
   - python=3.11
-  - anndata=0.10.8
+  - anndata=0.11.1
+  - pandas

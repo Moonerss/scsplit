@@ -14,7 +14,7 @@ Each local process declares typed Nextflow inputs and named outputs in `main.nf`
 
 - `workflows/`: top-level pipeline orchestration and channel transformations.
 - `modules/local/`: validation, split, conversion, and result collection processes; `templates/` contains the Python/R work scripts.
-- `conf/`: shared process defaults, resource overrides, and execution profiles; module dependency definitions live with each module.
+- `containers/`: shared all-module runtime dependencies, Dockerfile, and Singularity/Apptainer definition; module-specific environments remain for the Conda profile.
 - `assets/`: schema assets.
 - `tests/test_data/`: reserved for small fixtures; currently empty.
 - `DESIGN.md`: intended product/design scope; some proposed directories and interfaces are not implemented. Follow the live workflow and process contracts for current behavior.
@@ -31,8 +31,8 @@ nextflow run . -profile conda --input samplesheet.csv --split_column donor --out
 
 ## Code Conventions & Common Patterns
 
-- Keep runtime dependencies with their owning module: declare `conda "${moduleDir}/environment.yml"` and engine-aware `container` in that module's `main.nf`; keep package lists in its `environment.yml`. `conf/modules.config` is for process resources and pipeline-level overrides, not the sole dependency registry.
-- Select exactly one environment profile: `-profile conda`, `-profile docker`, or `-profile singularity`. Modules using Seqera Wave images provide explicit Docker and Singularity/Apptainer references, following the pattern in `scdownstream` modules.
+- Each module declares its Conda environment and runtime image in `modules/local/<module>/main.nf`; module Conda dependencies live in `environment.yml`. `containers/environment.yml` is the single dependency source for the unified Docker/Singularity runtime. `conf/modules.config` contains resource overrides.
+- Select one runtime profile: `-profile conda`, `-profile docker`, `-profile singularity`, or `-profile apptainer`. Container profiles use `params.container_image`, defaulting to `scsplit:0.1.0`; Singularity/Apptainer use `containers/scsplit.sif`.
 
 ## Important Files
 
@@ -44,12 +44,13 @@ nextflow run . -profile conda --input samplesheet.csv --split_column donor --out
 - `modules/local/split_h5ad/`, `split_sce_rds/`: native split logic and split manifests.
 - `modules/local/convert_h5ad_to_rds/`, `convert_rds_to_h5ad/`: cross-format conversion.
 - `modules/local/collect_outputs/`: dataset output layout and final manifest.
+- `containers/environment.yml`, `containers/Dockerfile`, `containers/scsplit.def`: unified runtime dependency list and container builds.
 - `conf/base.config`, `conf/modules.config`: process defaults and resource overrides.
 - `README.md`, `DESIGN.md`: usage and design reference.
 
 ## Runtime/Tooling Preferences
 
-The pipeline runtime is Nextflow; the configuration requires Bash. Python modules use Python 3.11; R modules use R 4.3, with package versions declared in each module's `environment.yml`. Use one environment profile: Conda, Docker, or Singularity/Apptainer. Container engines must be installed on the execution host. The repository has no Python/R package manager manifest or lockfile, and no Node/Bun tooling. The shell configured in Nextflow is `/bin/bash`; use a compatible Nextflow execution environment.
+The pipeline runtime is Nextflow; the configuration requires Bash. Python modules use Python 3.11 and the unified container uses R 4.5; module Conda environments declare their own package versions. Build Docker with `docker build -f containers/Dockerfile -t scsplit:0.1.0 .`, or build Singularity/Apptainer from the repository root with `apptainer build containers/scsplit.sif containers/scsplit.def`. Container engines must be installed on the execution host. The repository has no Python/R package manager manifest or lockfile, and no Node/Bun tooling.
 
 ## Testing & QA
 

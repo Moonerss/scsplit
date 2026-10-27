@@ -2,8 +2,8 @@ process SPLIT_H5AD {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/de/de2455bdcbc53723a8d942ffb0dec7559690ef4bea6b380fea2edba7c5d637b9/data'
-        : 'community.wave.seqera.io/library/anndata_python_pyyaml:e77bb4f393d60a08'}"
+        ? "${projectDir}/containers/scsplit.sif"
+        : params.container_image}"
 
     input:
     tuple val(meta), path(input), val(split_column)

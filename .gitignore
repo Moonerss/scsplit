@@ -8,4 +8,5 @@ results/
 *.timeline
 *.dag.svg
 *.bak
+containers/*.sif
 .claude/settings.local.json
