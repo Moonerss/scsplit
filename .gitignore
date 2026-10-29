@@ -10,3 +10,6 @@ results/
 *.bak
 containers/*.sif
 .claude/settings.local.json
+/AGENTS.md
+/DESIGN.md
+/.claude/
