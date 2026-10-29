@@ -6,7 +6,7 @@ include { SCSPLIT } from './workflows/scsplit'
 
 params.input = null
 params.split_column = null
-params.output_format = 'h5ad'
+params.output_format = 'anndata'
 params.outdir = 'results'
 
 

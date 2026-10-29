@@ -1,4 +1,4 @@
-process SPLIT_SCE_RDS {
+process SPLIT_RDS {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
     container "${params.container_image}"
@@ -11,5 +11,5 @@ process SPLIT_SCE_RDS {
     path 'versions.yml', emit: versions
 
     script:
-    template 'split_sce_rds.R'
+    template 'split_rds.R'
 }

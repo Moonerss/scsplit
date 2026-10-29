@@ -18,8 +18,9 @@
     },
     "output_format": {
       "type": "string",
-      "enum": ["h5ad", "rds", "both"],
-      "default": "h5ad"
+      "enum": ["anndata", "sce", "seurat"],
+      "default": "anndata",
+      "description": "Output object format: AnnData H5AD, SingleCellExperiment RDS, or Seurat RDS"
     },
     "outdir": {
       "type": "string",

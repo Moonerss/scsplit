@@ -1,0 +1,4 @@
+"name","input"
+"simulated_anndata","/mnt/d/code/Github/nextflow/scsplit/tests/test_data/simulated_cells.h5ad"
+"simulated_sce","/mnt/d/code/Github/nextflow/scsplit/tests/test_data/simulated_cells.rds"
+"simulated_seurat","/mnt/d/code/Github/nextflow/scsplit/tests/test_data/simulated_seurat.rds"

@@ -43,13 +43,13 @@ for value in groups:
     subset = obj[values == value].copy()
     output_path = os.path.join(output_dir, f'{output_name}.h5ad')
     subset.write_h5ad(output_path)
-    records.append([dataset_name, os.path.abspath(input_path), 'h5ad', split_column,
-                    str(value), 'h5ad', output_path, subset.n_obs, subset.n_vars])
+    records.append([dataset_name, os.path.abspath(input_path), 'h5ad', 'AnnData', split_column,
+                    str(value), 'anndata', 'AnnData', output_path, subset.n_obs, subset.n_vars])
 
 with open(manifest_path, 'w', newline='', encoding='utf-8') as handle:
     writer = csv.writer(handle, delimiter=chr(9), lineterminator=chr(10))
-    writer.writerow(['name', 'input_file', 'input_format', 'split_column', 'split_value',
-                     'output_format', 'output_file', 'n_cells', 'n_features'])
+    writer.writerow(['name', 'input_file', 'input_format', 'input_object_type', 'split_column', 'split_value',
+                     'output_format', 'output_object_type', 'output_file', 'n_cells', 'n_features'])
     writer.writerows(records)
 
 with open('versions.yml', 'w', encoding='utf-8') as handle:

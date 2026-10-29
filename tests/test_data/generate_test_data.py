@@ -27,7 +27,7 @@ obs = pd.DataFrame(
 )
 var = pd.DataFrame(
     {"gene_symbol": [f"Gene{index}" for index in range(1, 7)]},
-    index=[f"gene_{index:02d}" for index in range(1, 7)],
+    index=[f"gene{index:02d}" for index in range(1, 7)],
 )
 adata = ad.AnnData(X=counts, obs=obs, var=var)
 adata.uns["simulated"] = True
@@ -37,19 +37,21 @@ adata.write_h5ad(h5ad_path)
 
 samplesheet_h5ad = output_dir / "samplesheet_h5ad.csv"
 pd.DataFrame(
-    [{"name": "simulated_h5ad", "input": str(h5ad_path.resolve())}]
+    [{"name": "simulated_anndata", "input": str(h5ad_path.resolve())}]
 ).to_csv(samplesheet_h5ad, index=False)
 
 rds_path = output_dir / "simulated_cells.rds"
-if rds_path.exists():
+seurat_path = output_dir / "simulated_seurat.rds"
+if rds_path.exists() and seurat_path.exists():
     pd.DataFrame(
         [
-            {"name": "simulated_h5ad", "input": str(h5ad_path.resolve())},
-            {"name": "simulated_rds", "input": str(rds_path.resolve())},
+            {"name": "simulated_anndata", "input": str(h5ad_path.resolve())},
+            {"name": "simulated_sce", "input": str(rds_path.resolve())},
+            {"name": "simulated_seurat", "input": str(seurat_path.resolve())},
         ]
     ).to_csv(output_dir / "samplesheet_all.csv", index=False)
 
 print(f"wrote {h5ad_path} ({adata.n_obs} cells x {adata.n_vars} features)")
 print(f"wrote {samplesheet_h5ad}")
-if rds_path.exists():
+if rds_path.exists() and seurat_path.exists():
     print(f"wrote {output_dir / 'samplesheet_all.csv'}")

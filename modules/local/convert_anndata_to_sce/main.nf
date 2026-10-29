@@ -1,4 +1,4 @@
-process CONVERT_H5AD_TO_RDS {
+process CONVERT_ANNDATA_TO_SCE {
     tag "$meta.name"
     conda "${moduleDir}/environment.yml"
     container "${params.container_image}"
@@ -11,5 +11,5 @@ process CONVERT_H5AD_TO_RDS {
     path 'versions.yml', emit: versions
 
     script:
-    template 'convert_h5ad_to_rds.R'
+    template 'convert_anndata_to_sce.R'
 }

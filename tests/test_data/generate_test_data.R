@@ -6,13 +6,19 @@ suppressPackageStartupMessages({
   library(S4Vectors)
 })
 
-output_dir <- normalizePath(dirname(commandArgs(trailingOnly = FALSE)[grep("^--file=", commandArgs(trailingOnly = FALSE))] |> sub("^--file=", "")), mustWork = TRUE)
+script_args <- commandArgs(trailingOnly = FALSE)
+script_file <- script_args[startsWith(script_args, "--file=")][1]
+if (is.na(script_file)) {
+  output_dir <- normalizePath(getwd(), mustWork = TRUE)
+} else {
+  output_dir <- dirname(normalizePath(sub("^--file=", "", script_file), mustWork = TRUE))
+}
 
 cell_ids <- sprintf("cell_%02d", 1:12)
 group_values <- c(rep("donor A", 4), rep("donor_A", 4), rep("donor/B", 4))
 batch_values <- c(rep("batch_1", 6), rep("batch_2", 6))
 counts <- matrix(seq_len(72), nrow = 6, ncol = 12,
-                 dimnames = list(sprintf("gene_%02d", 1:6), cell_ids))
+                 dimnames = list(sprintf("gene%02d", 1:6), cell_ids))
 
 col_data <- DataFrame(
   donor = group_values,
@@ -40,20 +46,19 @@ write_samplesheet <- function(path, rows) {
 }
 
 h5ad_path <- file.path(output_dir, "simulated_cells.h5ad")
-write_samplesheet(
-  file.path(output_dir, "samplesheet_rds.csv"),
-  data.frame(name = "simulated_rds", input = normalizePath(rds_path, mustWork = TRUE))
-)
-if (file.exists(h5ad_path)) {
+seurat_path <- file.path(output_dir, "simulated_seurat.rds")
+if (file.exists(h5ad_path) && file.exists(seurat_path)) {
   write_samplesheet(
     file.path(output_dir, "samplesheet_all.csv"),
     data.frame(
-      name = c("simulated_h5ad", "simulated_rds"),
-      input = c(normalizePath(h5ad_path, mustWork = TRUE), normalizePath(rds_path, mustWork = TRUE))
+      name = c("simulated_anndata", "simulated_sce", "simulated_seurat"),
+      input = c(normalizePath(h5ad_path, mustWork = TRUE),
+                normalizePath(rds_path, mustWork = TRUE),
+                normalizePath(seurat_path, mustWork = TRUE))
     )
   )
 }
 
 cat(sprintf("wrote %s (%d features x %d cells)\n", rds_path, nrow(sce), ncol(sce)))
 cat(sprintf("wrote %s\n", file.path(output_dir, "samplesheet_rds.csv")))
-if (file.exists(h5ad_path)) cat(sprintf("wrote %s\n", file.path(output_dir, "samplesheet_all.csv")))
+if (file.exists(h5ad_path) && file.exists(seurat_path)) cat(sprintf("wrote %s\n", file.path(output_dir, "samplesheet_all.csv")))
