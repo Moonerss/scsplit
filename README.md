@@ -2,6 +2,56 @@
 
 Nextflow workflow that splits H5AD/AnnData, SingleCellExperiment RDS, or Seurat RDS inputs by one cell metadata column and emits one selected output object format.
 
+## Workflow
+
+```mermaid
+flowchart TD
+    classDef workflow fill:#D3E1ED,stroke:#6B879B,color:#1F2933
+    classDef decision fill:#D3E1ED,stroke:#6B879B,color:#1F2933
+
+    A["Samplesheet CSV\nname,input"] --> B["main.nf\nChannel.fromPath"]
+    B --> C["SCSPLIT\nvalidate output_format"]
+    C --> D["VALIDATE_INPUT\ncheck columns, names, paths"]
+    D --> E["Validated TSV\ncreate metadata tuples"]
+
+    E --> F{"Input format"}
+    F -->|".h5ad"| G["SPLIT_H5AD\nsplit by metadata column"]
+    F -->|".rds"| H["CLASSIFY_RDS\nidentify SCE or Seurat"]
+    H --> I["SPLIT_RDS\nsplit by metadata column"]
+
+    G --> J["AnnData split parts\nH5AD + split manifest"]
+    I --> K["RDS split parts\nSCE/Seurat + split manifest"]
+
+    J --> L{"Requested output_format"}
+    K --> L
+    L -->|"anndata"| M["Native H5AD parts"]
+    K -->|"anndata"| N["CONVERT_RDS_TO_H5AD"]
+    N --> M
+
+    L -->|"sce"| O["Native SCE parts"]
+    K -->|"sce"| P["CONVERT_SEURAT_TO_SCE\nfor Seurat parts"]
+    J -->|"sce"| Q["CONVERT_ANNDATA_TO_SCE"]
+    P --> O
+    Q --> O
+
+    L -->|"seurat"| R["Native Seurat parts"]
+    K -->|"seurat"| S["CONVERT_SCE_TO_SEURAT\nfor SCE parts"]
+    J -->|"seurat"| T["CONVERT_ANNDATA_TO_SEURAT"]
+    S --> R
+    T --> R
+
+    M --> U["Group parts by dataset"]
+    O --> U
+    R --> U
+    U --> V["COLLECT_OUTPUTS\norganize selected format + manifest"]
+    V --> W["outdir/<name>/\n(anndata|sce|seurat)/\nsplit_manifest.tsv"]
+
+    class A,B,C,D,E,G,H,I,J,K,M,N,O,P,Q,R,S,T,U,V,W workflow
+    class F,L decision
+```
+
+The workflow keeps native parts when they already match `--output_format` and invokes only the required conversion processes for other input types. Each dataset is grouped before `COLLECT_OUTPUTS`, which publishes the selected format and its manifest under `--outdir`.
+
 ## Inputs
 
 `--input` is a CSV samplesheet with exactly these columns:
