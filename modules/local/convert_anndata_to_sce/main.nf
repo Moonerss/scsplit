@@ -11,5 +11,5 @@ process CONVERT_ANNDATA_TO_SCE {
     path 'versions.yml', emit: versions
 
     script:
-    template 'convert_anndata_to_sce.R'
+    "convert_anndata_to_sce.R '${input}' '${manifest}'"
 }

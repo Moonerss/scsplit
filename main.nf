@@ -11,6 +11,10 @@ params.outdir = 'results'
 
 
 workflow {
+    if (!params.split_column || params.split_column.toString().trim() in ['', 'null']) {
+        error "Missing required parameter '--split_column'; specify a cell metadata column, for example '--split_column donor'"
+    }
+
     samplesheet = Channel.fromPath(params.input, checkIfExists: true)
 
     SCSPLIT(

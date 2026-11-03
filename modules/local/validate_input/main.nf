@@ -11,6 +11,5 @@ process VALIDATE_INPUT {
     path 'versions.yml', emit: versions
 
     script:
-    output = 'validated_samplesheet.tsv'
-    template 'validate_input.py'
+    "validate_input.py --input '${samplesheet}' --output validated_samplesheet.tsv"
 }

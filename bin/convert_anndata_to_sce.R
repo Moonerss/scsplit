@@ -1,9 +1,11 @@
 #!/usr/bin/env Rscript
 suppressPackageStartupMessages(library(anndataR))
 
-input <- "${input}"
-output <- paste0("${input.simpleName}", '.rds')
-manifest <- "${manifest}"
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 2L) stop('Usage: convert_anndata_to_sce.R INPUT MANIFEST')
+input <- args[[1L]]
+output <- paste0(tools::file_path_sans_ext(basename(input)), '.rds')
+manifest <- args[[2L]]
 
 adata <- read_h5ad(input)
 sce <- adata\$as_SingleCellExperiment()

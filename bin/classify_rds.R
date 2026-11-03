@@ -2,10 +2,11 @@
 suppressPackageStartupMessages(library(SingleCellExperiment))
 suppressPackageStartupMessages(library(SeuratObject))
 
-input <- "${input}"
-name <- "${meta.name}"
-split_column <- "${split_column}"
-
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 3L) stop('Usage: classify_rds.R INPUT DATASET_NAME SPLIT_COLUMN')
+input <- args[[1L]]
+name <- args[[2L]]
+split_column <- args[[3L]]
 obj <- readRDS(input)
 if (inherits(obj, 'SingleCellExperiment')) {
   input_object_type <- 'SingleCellExperiment'

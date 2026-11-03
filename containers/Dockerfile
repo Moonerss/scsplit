@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.description="Runtime dependencies for all scsplit
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER containers/environment.yml /tmp/environment.yml
 
+
 RUN micromamba install --yes --name base --file /tmp/environment.yml \
     && micromamba clean --all --yes \
     && rm /tmp/environment.yml
@@ -14,3 +15,4 @@ ENV LANG=C.UTF-8 \
     TMPDIR=/tmp
 
 WORKDIR /workspace
+ENV PATH="/opt/scsplit/bin:$PATH"

@@ -11,5 +11,5 @@ process SPLIT_H5AD {
     path 'versions.yml', emit: versions
 
     script:
-    template 'split_h5ad.py'
+    "split_h5ad.py --input '${input}' --split-column '${split_column}' --dataset-name '${meta.name}'"
 }

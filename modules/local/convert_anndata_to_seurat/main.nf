@@ -11,5 +11,5 @@ process CONVERT_ANNDATA_TO_SEURAT {
     path 'versions.yml', emit: versions
 
     script:
-    template 'convert_anndata_to_seurat.R'
+    "convert_anndata_to_seurat.R '${input}' '${manifest}'"
 }

@@ -12,8 +12,15 @@ process COLLECT_OUTPUTS {
     path "${meta.name}", emit: collected
 
     script:
-    manifest_args = groovy.json.JsonOutput.toJson(manifests.collect { it.toString() })
-    output_args = groovy.json.JsonOutput.toJson(output_files.collect { it.toString() })
-    format_args = groovy.json.JsonOutput.toJson(formats.collect { it.toString() })
-    template 'collect_outputs.py'
+    def arguments = groovy.json.JsonOutput.toJson([
+        manifests: manifests.collect { it.toString() },
+        outputs: output_files.collect { it.toString() },
+        formats: formats.collect { it.toString() },
+        name: meta.name
+    ])
+    def encodedArguments = arguments.bytes.encodeBase64().toString()
+    """
+    printf '%s' '${encodedArguments}' | base64 -d > collect_arguments.json
+    collect_outputs.py --arguments collect_arguments.json
+    """
 }

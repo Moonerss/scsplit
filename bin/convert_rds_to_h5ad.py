@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import os
 import platform
@@ -10,10 +11,13 @@ import anndata2ri
 import rpy2.robjects as ro
 from rpy2.robjects.conversion import localconverter
 
-input_path = "${input}"
-output_path = "${input.simpleName}.h5ad"
-manifest_path = "${manifest}"
-
+parser = argparse.ArgumentParser()
+parser.add_argument('--input', required=True)
+parser.add_argument('--manifest', required=True)
+args = parser.parse_args()
+input_path = args.input
+output_path = f"{os.path.splitext(os.path.basename(input_path))[0]}.h5ad"
+manifest_path = args.manifest
 obj = ro.r['readRDS'](input_path)
 is_sce = bool(ro.r['inherits'](obj, 'SingleCellExperiment')[0])
 is_seurat = bool(ro.r['inherits'](obj, 'Seurat')[0])

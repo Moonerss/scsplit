@@ -5,10 +5,11 @@ suppressPackageStartupMessages({
   library(Seurat)
 })
 
-input <- "${input}"
-output <- paste0("${input.simpleName}", '.seurat.rds')
-manifest <- "${manifest}"
-
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 2L) stop('Usage: convert_anndata_to_seurat.R INPUT MANIFEST')
+input <- args[[1L]]
+output <- paste0(tools::file_path_sans_ext(basename(input)), '.seurat.rds')
+manifest <- args[[2L]]
 adata <- read_h5ad(input)
 sce <- adata\$as_SingleCellExperiment()
 if (!inherits(sce, 'SingleCellExperiment') || nrow(sce) == 0L || ncol(sce) == 0L) {

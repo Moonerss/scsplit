@@ -4,10 +4,11 @@ suppressPackageStartupMessages({
   library(Seurat)
 })
 
-output <- paste0("${input.simpleName}", '.sce.rds')
-manifest <- "${manifest}"
-input <- "${input}"
-
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 2L) stop('Usage: convert_seurat_to_sce.R INPUT MANIFEST')
+input <- args[[1L]]
+output <- paste0(tools::file_path_sans_ext(basename(input)), '.sce.rds')
+manifest <- args[[2L]]
 seurat <- readRDS(input)
 if (!inherits(seurat, 'Seurat')) stop('ERROR: RDS object is not a Seurat object')
 assay_name <- DefaultAssay(seurat)

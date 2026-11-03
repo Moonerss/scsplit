@@ -9,5 +9,5 @@ process CLASSIFY_RDS {
     tuple val(meta), path(input), path('classified_metadata.tsv'), emit: classified
 
     script:
-    template 'classify_rds.R'
+    "classify_rds.R '${input}' '${meta.name}' '${split_column}'"
 }

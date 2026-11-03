@@ -11,5 +11,5 @@ process SPLIT_RDS {
     path 'versions.yml', emit: versions
 
     script:
-    template 'split_rds.R'
+    "split_rds.R '${input}' '${split_column}' '${meta.name}' '${meta.input_object_type}'"
 }

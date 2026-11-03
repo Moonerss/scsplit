@@ -3,11 +3,13 @@ From: mambaorg/micromamba:1.5.10
 
 %labels
     Author scsplit contributors
-    Description Runtime dependencies for all scsplit Nextflow processes
+    Description Runtime dependencies for all scsplit processes
     Pipeline scsplit
 
 %files
     containers/environment.yml /environment.yml
+    bin /opt/scsplit/bin
+
 %post
     micromamba install --yes --name base --file /environment.yml
     micromamba clean --all --yes
@@ -19,7 +21,7 @@ From: mambaorg/micromamba:1.5.10
     export LANG=C.UTF-8
     export LC_ALL=C.UTF-8
     export TMPDIR=/tmp/scsplit
-    export PATH="/opt/conda/bin:$PATH"
+    export PATH="/opt/scsplit/bin:/opt/conda/bin:$PATH"
 
 %runscript
     exec "$@"

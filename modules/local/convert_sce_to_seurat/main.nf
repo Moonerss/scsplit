@@ -10,5 +10,5 @@ process CONVERT_SCE_TO_SEURAT {
     path 'versions.yml', emit: versions
 
     script:
-    template 'convert_sce_to_seurat.R'
+    "convert_sce_to_seurat.R '${input}' '${manifest}'"
 }

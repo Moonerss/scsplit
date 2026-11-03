@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import hashlib
 import os
@@ -8,9 +9,14 @@ import re
 import anndata as ad
 import pandas as pd
 
-input_path = "${input}"
-split_column = "${split_column}"
-dataset_name = "${meta.name}"
+parser = argparse.ArgumentParser()
+parser.add_argument('--input', required=True)
+parser.add_argument('--split-column', required=True)
+parser.add_argument('--dataset-name', required=True)
+args = parser.parse_args()
+input_path = args.input
+split_column = args.split_column
+dataset_name = args.dataset_name
 output_dir = 'h5ad_outputs'
 manifest_path = 'split_manifest.tsv'
 
@@ -39,6 +45,10 @@ for value in groups:
     if output_name in used and used[output_name] != str(value):
         suffix = hashlib.sha256(str(value).encode('utf-8')).hexdigest()[:12]
         output_name = f'{base}__{suffix}'
+        collision_index = 1
+        while output_name in used:
+            output_name = f'{base}__{suffix}_{collision_index}'
+            collision_index += 1
     used[output_name] = str(value)
     subset = obj[values == value].copy()
     output_path = os.path.join(output_dir, f'{output_name}.h5ad')

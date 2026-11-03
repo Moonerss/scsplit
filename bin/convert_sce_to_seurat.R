@@ -4,10 +4,11 @@ suppressPackageStartupMessages({
   library(Seurat)
 })
 
-output <- paste0("${input.simpleName}", '.seurat.rds')
-manifest <- "${manifest}"
-input <- "${input}"
-
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 2L) stop('Usage: convert_sce_to_seurat.R INPUT MANIFEST')
+input <- args[[1L]]
+output <- paste0(tools::file_path_sans_ext(basename(input)), '.seurat.rds')
+manifest <- args[[2L]]
 sce <- readRDS(input)
 if (!inherits(sce, 'SingleCellExperiment')) stop('ERROR: RDS object is not a SingleCellExperiment')
 if (nrow(sce) == 0L || ncol(sce) == 0L) stop('ERROR: input SingleCellExperiment must contain cells and features')

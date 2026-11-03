@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import os
 import platform
 import re
 from pathlib import Path
 
-input_path = "${samplesheet}"
-output_path = "${output}"
+parser = argparse.ArgumentParser()
+parser.add_argument('--input', required=True)
+parser.add_argument('--output', required=True)
+args = parser.parse_args()
+input_path = args.input
+output_path = args.output
 
 NAME = re.compile(r'[A-Za-z0-9_.-]+')
 EXTENSIONS = {'.h5ad': 'h5ad', '.rds': 'rds'}

@@ -11,5 +11,5 @@ process CONVERT_RDS_TO_H5AD {
     path 'versions.yml', emit: versions
 
     script:
-    template 'convert_rds_to_h5ad.py'
+    "convert_rds_to_h5ad.py --input '${input}' --manifest '${manifest}'"
 }

@@ -2,10 +2,12 @@
 suppressPackageStartupMessages(library(SingleCellExperiment))
 suppressPackageStartupMessages(library(SeuratObject))
 
-input <- "${input}"
-split_column <- "${split_column}"
-name <- "${meta.name}"
-metadata_object_type <- "${meta.input_object_type}"
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 4L) stop('Usage: split_rds.R INPUT SPLIT_COLUMN DATASET_NAME OBJECT_TYPE')
+input <- args[[1L]]
+split_column <- args[[2L]]
+name <- args[[3L]]
+metadata_object_type <- args[[4L]]
 output_dir <- 'rds_outputs'
 manifest <- 'split_manifest.tsv'
 

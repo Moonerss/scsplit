@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import json
 import os
@@ -6,16 +7,25 @@ import platform
 import shutil
 from pathlib import Path
 
-manifest_args = json.loads('''${manifest_args}''')
-output_args = json.loads('''${output_args}''')
-format_args = json.loads('''${format_args}''')
-name = "${meta.name}"
+parser = argparse.ArgumentParser()
+parser.add_argument('--arguments', required=True)
+args = parser.parse_args()
+with open(args.arguments, encoding='utf-8') as handle:
+    parameters = json.load(handle)
+manifest_args = parameters.get('manifests', [])
+output_args = parameters['outputs']
+format_args = parameters['formats']
+name = parameters['name']
+
+manifest_paths = sorted(Path('.').glob('*.tsv'))
+if not manifest_paths:
+    raise SystemExit('ERROR: no staged manifest files found')
 
 fields = ['name', 'input_file', 'input_format', 'input_object_type', 'split_column', 'split_value',
           'output_format', 'output_object_type', 'output_file', 'n_cells', 'n_features']
 records_by_key = {}
 records_by_name = {}
-for manifest in dict.fromkeys(manifest_args):
+for manifest in manifest_paths:
     with open(manifest, newline='', encoding='utf-8') as source:
         for record in csv.DictReader(source, delimiter=chr(9)):
             output_name = Path(record['output_file']).name
